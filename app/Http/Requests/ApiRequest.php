@@ -2,37 +2,22 @@
 
 namespace App\Http\Requests;
 
-use Facade\FlareClient\Http\Response;
+use App\Traits\ApiResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Traits\ApiResponse;
+use Illuminate\Http\Response;
 
 abstract class ApiRequest extends FormRequest
 {
     use ApiResponse;
     /**
-     * Determine if the user is authorized to make this request.
+     * Get the validation rules that apply to the request
      *
-     * @return bool
+     * @return array
      */
-    // public function authorize()
-    // {
-    //     return false;
-    // }
-
-    // /**
-    //  * Get the validation rules that apply to the request.
-    //  *
-    //  * @return array
-    //  */
-    // public function rules()
-    // {
-    //     return [
-    //         //
-    //     ];
-    // }
     abstract public function rules();
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException($this->apiError(
@@ -40,11 +25,12 @@ abstract class ApiRequest extends FormRequest
             Response::HTTP_UNPROCESSABLE_ENTITY,
         ));
     }
+
     protected function failedAuthorization()
     {
         throw new HttpResponseException($this->apiError(
             null,
-            Response::HTTP_UNAUTHORIZED,
+            Response::HTTP_UNAUTHORIZED
         ));
     }
 }
